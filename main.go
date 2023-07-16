@@ -21,6 +21,7 @@ func (Calculator) multiply(a, b int) int {
 }
 func (Calculator) divide(a, b int) int {
 	return a / b
+
 }
 
 ///////////////////////////////////// Проверка арабского числа\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -29,6 +30,7 @@ func (Calculator) isArabicNumber(num string) bool {
 		if char < '0' || char > '9' {
 			return false
 		}
+
 	}
 	return true
 }
@@ -36,6 +38,7 @@ func (Calculator) isArabicNumber(num string) bool {
 ////////////////////////////////////// Проверка римского числа\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 func (Calculator) isRomanNumber(num string) bool {
 	romanNumerals := map[string]bool{
+
 		"I":    true,
 		"II":   true,
 		"III":  true,
@@ -46,6 +49,7 @@ func (Calculator) isRomanNumber(num string) bool {
 		"VIII": true,
 		"IX":   true,
 		"X":    true,
+		"L":    true,
 	}
 
 	return romanNumerals[num]
@@ -62,8 +66,8 @@ func main() {
 	operatorIndex := strings.IndexAny(input, "+-*/")
 
 	if operatorIndex == -1 {
-		fmt.Println("Вывод ошибки, так как строка не является математической операцией.")
-		return
+		panic("Вывод ошибки, так как строка не является математической операцией.")
+
 	}
 
 	aStr := input[0:operatorIndex]
@@ -71,7 +75,6 @@ func main() {
 
 	var a, b int
 	var isArabic bool
-
 	if operator.isArabicNumber(aStr) && operator.isArabicNumber(bStr) {
 		fmt.Sscanf(aStr, "%d", &a)
 		fmt.Sscanf(bStr, "%d", &b)
@@ -80,13 +83,15 @@ func main() {
 		a = convertRomanToArabic(aStr)
 		b = convertRomanToArabic(bStr)
 		isArabic = false
-	} else {
-		fmt.Println("Вывод ошибки, так как используются одновременно разные системы счисления.")
-		return
-	}
 
+	} else if convertRomanToArabic(aStr) < 1 && convertRomanToArabic(bStr) > 0 || convertRomanToArabic(aStr) > 0 && convertRomanToArabic(bStr) < 1 {
+		panic("Вывод ошибки, так как используются одновременно разные системы счисления.")
+	}
 	var result int
 
+	if len(input) > 7 {
+		panic("Вывод ошибки, так как формат математической операции не удовлетворяет заданию — два операнда и один оператор (+, -, /, *).")
+	}
 	switch input[operatorIndex] {
 	case '+':
 		result = operator.add(a, b)
@@ -96,11 +101,8 @@ func main() {
 		result = operator.multiply(a, b)
 	case '/':
 		result = operator.divide(a, b)
+
 	default:
-		fmt.Println("Вывод ошибки, так как формат математической операции не удовлетворяет заданию — два операнда и один оператор (+, -, /, *).")
-
-		return
-
 	}
 
 	if isArabic {
@@ -150,6 +152,10 @@ func convertArabicToRoman(arabicNum int) string {
 		Value  int
 		Symbol string
 	}{
+		{100, "C"},
+		{90, "XC"},
+		{50, "L"},
+		{40, "XL"},
 		{10, "X"},
 		{9, "IX"},
 		{5, "V"},
@@ -167,8 +173,8 @@ func convertArabicToRoman(arabicNum int) string {
 
 	}
 	if arabicNum < 0 {
-		fmt.Println("Вывод ошибки, так как в римской системе нет отрицательных чисел.")
+		panic("Вывод ошибки, так как в римской системе нет отрицательных чисел.")
 	}
-	return result
 
+	return result
 }
