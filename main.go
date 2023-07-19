@@ -10,18 +10,22 @@ type Calculator struct {
 
 ///////////////////////////////// Математические операции\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-func (Calculator) add(a, b int) int {
+func (Calculator) plus(a, b int) int {
+
 	return a + b
 }
-func (Calculator) subtract(a, b int) int {
+func (Calculator) minus(a, b int) int {
+
 	return a - b
 }
-func (Calculator) multiply(a, b int) int {
+
+func (Calculator) mno(a, b int) int {
+
 	return a * b
 }
-func (Calculator) divide(a, b int) int {
-	return a / b
+func (Calculator) del(a, b int) int {
 
+	return a / b
 }
 
 ///////////////////////////////////// Проверка арабского числа\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -30,7 +34,6 @@ func (Calculator) isArabicNumber(num string) bool {
 		if char < '0' || char > '9' {
 			return false
 		}
-
 	}
 	return true
 }
@@ -49,13 +52,14 @@ func (Calculator) isRomanNumber(num string) bool {
 		"VIII": true,
 		"IX":   true,
 		"X":    true,
-		"L":    true,
 	}
 
 	return romanNumerals[num]
+
 }
 
 func main() {
+
 	operator := Calculator{}
 
 	fmt.Println("Введите выражение: ")
@@ -69,7 +73,6 @@ func main() {
 		panic("Вывод ошибки, так как строка не является математической операцией.")
 
 	}
-
 	aStr := input[0:operatorIndex]
 	bStr := input[operatorIndex+1:]
 
@@ -83,28 +86,40 @@ func main() {
 		a = convertRomanToArabic(aStr)
 		b = convertRomanToArabic(bStr)
 		isArabic = false
+	}
 
-	} else if convertRomanToArabic(aStr) < 1 && convertRomanToArabic(bStr) > 0 || convertRomanToArabic(aStr) > 0 && convertRomanToArabic(bStr) < 1 {
+	if convertRomanToArabic(aStr) < 1 && convertRomanToArabic(bStr) > 0 || convertRomanToArabic(aStr) > 0 && convertRomanToArabic(bStr) < 1 {
 		panic("Вывод ошибки, так как используются одновременно разные системы счисления.")
 	}
-	var result int
 
-	if len(input) > 7 {
-		panic("Вывод ошибки, так как формат математической операции не удовлетворяет заданию — два операнда и один оператор (+, -, /, *).")
+	if a < 0 || a > 10 {
+		panic("Вывод ошибки, на вход принимаются числа от 1 до 10 включительно.")
+		return
 	}
+	if b < 0 || b > 10 {
+		panic("Вывод ошибки, на вход принимаются числа от 1 до 10 включительно.")
+		return
+	}
+	if len(input[0:operatorIndex]) > 3 || len(input[operatorIndex+1:]) > 3 {
+		panic("Вывод ошибки, некорректный ввод.")
+		return
+	}
+
+	var result int
 	switch input[operatorIndex] {
 	case '+':
-		result = operator.add(a, b)
+		result = operator.plus(a, b)
 	case '-':
-		result = operator.subtract(a, b)
+		result = operator.minus(a, b)
 	case '*':
-		result = operator.multiply(a, b)
+		result = operator.mno(a, b)
 	case '/':
-		result = operator.divide(a, b)
-
+		result = operator.del(a, b)
 	default:
 	}
-
+	if operator.del(a, b) > 10 {
+		panic("Вывод ошибки, так как формат математической операции не удовлетворяет заданию — два операнда и один оператор (+, -, /, *).")
+	}
 	if isArabic {
 		fmt.Println("Результат:", result)
 	} else {
@@ -142,8 +157,13 @@ func convertRomanToArabic(romanNum string) int {
 
 		prevValue = currValue
 	}
+	if result < 0 || result > 10 {
+		panic("Вывод ошибки, на вход принимаются числа от 1 до 10 включительно.")
+
+	}
 
 	return result
+
 }
 
 ////////////////////////////// Функция для конвертации арабского числа в римское\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -175,6 +195,5 @@ func convertArabicToRoman(arabicNum int) string {
 	if arabicNum < 0 {
 		panic("Вывод ошибки, так как в римской системе нет отрицательных чисел.")
 	}
-
 	return result
 }
